@@ -14,6 +14,8 @@
 		8777E1042C248C13000DBB38 /* SimpleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8777E1032C248C13000DBB38 /* SimpleView.swift */; };
 		8777E1062C248EE4000DBB38 /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8777E1052C248EE4000DBB38 /* Layout.swift */; };
 		8777E1092C24905D000DBB38 /* MyButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8777E1082C24905D000DBB38 /* MyButton.swift */; };
+		8777E10B2C2496CC000DBB38 /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8777E10A2C2496CC000DBB38 /* Onboarding.swift */; };
+		8777E10D2C24972B000DBB38 /* OnboardingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8777E10C2C24972B000DBB38 /* OnboardingCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +27,8 @@
 		8777E1032C248C13000DBB38 /* SimpleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleView.swift; sourceTree = "<group>"; };
 		8777E1052C248EE4000DBB38 /* Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
 		8777E1082C24905D000DBB38 /* MyButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyButton.swift; sourceTree = "<group>"; };
+		8777E10A2C2496CC000DBB38 /* Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onboarding.swift; sourceTree = "<group>"; };
+		8777E10C2C24972B000DBB38 /* OnboardingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +84,8 @@
 				8777E1032C248C13000DBB38 /* SimpleView.swift */,
 				8777E1052C248EE4000DBB38 /* Layout.swift */,
 				8777E1082C24905D000DBB38 /* MyButton.swift */,
+				8777E10A2C2496CC000DBB38 /* Onboarding.swift */,
+				8777E10C2C24972B000DBB38 /* OnboardingCell.swift */,
 			);
 			path = 01;
 			sourceTree = "<group>";
@@ -154,6 +160,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8777E10B2C2496CC000DBB38 /* Onboarding.swift in Sources */,
+				8777E10D2C24972B000DBB38 /* OnboardingCell.swift in Sources */,
 				8777E0F82C24896C000DBB38 /* ContentView.swift in Sources */,
 				8777E1062C248EE4000DBB38 /* Layout.swift in Sources */,
 				8777E1092C24905D000DBB38 /* MyButton.swift in Sources */,
