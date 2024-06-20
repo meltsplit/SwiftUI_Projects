@@ -15,7 +15,7 @@ struct ContentView: View {
                 .foregroundColor(/*@START_MENU_TOKEN@*/.blue/*@END_MENU_TOKEN@*/)
             Text("Hello World")
                 .font(.body)
-                .padding(.leading)
+                .padding(.horizontal, 5.0)
                 .border(/*@START_MENU_TOKEN@*/Color.pink/*@END_MENU_TOKEN@*/, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
         }
         .padding()
