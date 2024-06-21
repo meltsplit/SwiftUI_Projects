@@ -17,6 +17,7 @@
 		8777E10B2C2496CC000DBB38 /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8777E10A2C2496CC000DBB38 /* Onboarding.swift */; };
 		8777E10D2C24972B000DBB38 /* OnboardingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8777E10C2C24972B000DBB38 /* OnboardingCell.swift */; };
 		8777E1102C25EA00000DBB38 /* ListLoop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8777E10F2C25EA00000DBB38 /* ListLoop.swift */; };
+		8777E1122C25F265000DBB38 /* Setting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8777E1112C25F265000DBB38 /* Setting.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		8777E10A2C2496CC000DBB38 /* Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onboarding.swift; sourceTree = "<group>"; };
 		8777E10C2C24972B000DBB38 /* OnboardingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCell.swift; sourceTree = "<group>"; };
 		8777E10F2C25EA00000DBB38 /* ListLoop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListLoop.swift; sourceTree = "<group>"; };
+		8777E1112C25F265000DBB38 /* Setting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Setting.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +99,7 @@
 			isa = PBXGroup;
 			children = (
 				8777E10F2C25EA00000DBB38 /* ListLoop.swift */,
+				8777E1112C25F265000DBB38 /* Setting.swift */,
 			);
 			path = 02;
 			sourceTree = "<group>";
@@ -179,6 +182,7 @@
 				8777E1042C248C13000DBB38 /* SimpleView.swift in Sources */,
 				8777E0F62C24896C000DBB38 /* WarmUpApp.swift in Sources */,
 				8777E1102C25EA00000DBB38 /* ListLoop.swift in Sources */,
+				8777E1122C25F265000DBB38 /* Setting.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
