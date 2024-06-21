@@ -7,14 +7,19 @@
 
 import SwiftUI
 
+struct Fruit: Hashable {
+    let name: String
+    let price: Int
+}
+
 struct ListLoop: View {
     
     var fruits = [
-        "Apple",
-        "Banana",
-        "Cherry",
-        "Durian",
-        "Elder Berry"
+        Fruit(name: "Apple", price: 1000),
+        Fruit(name: "Banana", price: 1500),
+        Fruit(name: "Cherry", price: 1400),
+        Fruit(name: "Durian", price: 1500),
+        Fruit(name: "Elder Berry", price: 1300)
     ]
     
     var body: some View {
@@ -22,7 +27,9 @@ struct ListLoop: View {
             List {
                 ForEach(fruits, id: \.self) { f in
                     HStack {
-                        Text(f)
+                        Text(f.name)
+                        Spacer()
+                        Text(String(f.price))
                     }
                 }
             }
