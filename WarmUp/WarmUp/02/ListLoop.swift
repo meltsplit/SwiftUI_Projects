@@ -14,7 +14,9 @@ struct Fruit: Hashable {
 
 struct ListLoop: View {
     
-    var fruits = [
+    @State var name: String = ""
+    
+    @State var fruits = [
         Fruit(name: "Apple", price: 1000),
         Fruit(name: "Banana", price: 1500),
         Fruit(name: "Cherry", price: 1400),
@@ -24,17 +26,37 @@ struct ListLoop: View {
     
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(fruits, id: \.self) { f in
-                    HStack {
-                        Text(f.name)
-                        Spacer()
-                        Text(String(f.price))
+            VStack {
+                HStack {
+                    TextField("과일 이름 입력", text: $name)
+                    Button {
+                        fruits.append(.init(name: self.name, price: 1000))
+                    } label: {
+                        Text("추가")
+                            .padding()
+                            .foregroundStyle(.white)
+                            .background(.blue)
+                            .clipShape(.buttonBorder)
+                    }
+                }
+                .padding()
+                
+                List {
+                    ForEach(fruits, id: \.self) { f in
+                        HStack {
+                            Text(f.name)
+                            Spacer()
+                            Text(String(f.price))
+                        }
+                    }.onDelete { indexSet in
+                        fruits.remove(atOffsets: indexSet)
                     }
                 }
             }
+            .navigationTitle("Fruit Test")
+            
         }
-        .navigationTitle("Fruit Test")
+        
         
     }
 }
