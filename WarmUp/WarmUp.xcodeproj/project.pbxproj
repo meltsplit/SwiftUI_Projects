@@ -16,6 +16,7 @@
 		8777E1092C24905D000DBB38 /* MyButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8777E1082C24905D000DBB38 /* MyButton.swift */; };
 		8777E10B2C2496CC000DBB38 /* Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8777E10A2C2496CC000DBB38 /* Onboarding.swift */; };
 		8777E10D2C24972B000DBB38 /* OnboardingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8777E10C2C24972B000DBB38 /* OnboardingCell.swift */; };
+		8777E1102C25EA00000DBB38 /* ListLoop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8777E10F2C25EA00000DBB38 /* ListLoop.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,7 @@
 		8777E1082C24905D000DBB38 /* MyButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyButton.swift; sourceTree = "<group>"; };
 		8777E10A2C2496CC000DBB38 /* Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Onboarding.swift; sourceTree = "<group>"; };
 		8777E10C2C24972B000DBB38 /* OnboardingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingCell.swift; sourceTree = "<group>"; };
+		8777E10F2C25EA00000DBB38 /* ListLoop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListLoop.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +63,7 @@
 		8777E0F42C24896C000DBB38 /* WarmUp */ = {
 			isa = PBXGroup;
 			children = (
+				8777E10E2C25E9E1000DBB38 /* 02 */,
 				8777E1072C249046000DBB38 /* 01 */,
 				8777E0F52C24896C000DBB38 /* WarmUpApp.swift */,
 				8777E0F72C24896C000DBB38 /* ContentView.swift */,
@@ -88,6 +91,14 @@
 				8777E10C2C24972B000DBB38 /* OnboardingCell.swift */,
 			);
 			path = 01;
+			sourceTree = "<group>";
+		};
+		8777E10E2C25E9E1000DBB38 /* 02 */ = {
+			isa = PBXGroup;
+			children = (
+				8777E10F2C25EA00000DBB38 /* ListLoop.swift */,
+			);
+			path = 02;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -167,6 +178,7 @@
 				8777E1092C24905D000DBB38 /* MyButton.swift in Sources */,
 				8777E1042C248C13000DBB38 /* SimpleView.swift in Sources */,
 				8777E0F62C24896C000DBB38 /* WarmUpApp.swift in Sources */,
+				8777E1102C25EA00000DBB38 /* ListLoop.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
