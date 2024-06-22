@@ -11,7 +11,7 @@ import SwiftUI
 struct WarmUpApp: App {
     var body: some Scene {
         WindowGroup {
-            ListLoop()
+            Tab()
         }
     }
 }

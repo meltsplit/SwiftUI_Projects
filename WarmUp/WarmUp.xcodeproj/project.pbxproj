@@ -21,6 +21,8 @@
 		8777E1152C273649000DBB38 /* Modal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8777E1142C273649000DBB38 /* Modal.swift */; };
 		8777E1172C2736D1000DBB38 /* Detail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8777E1162C2736D1000DBB38 /* Detail.swift */; };
 		8777E1192C2737D9000DBB38 /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8777E1182C2737D9000DBB38 /* Navigation.swift */; };
+		8777E11B2C2739E6000DBB38 /* Tab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8777E11A2C2739E6000DBB38 /* Tab.swift */; };
+		8777E11D2C273C67000DBB38 /* TabDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8777E11C2C273C67000DBB38 /* TabDetail.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +41,8 @@
 		8777E1142C273649000DBB38 /* Modal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Modal.swift; sourceTree = "<group>"; };
 		8777E1162C2736D1000DBB38 /* Detail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Detail.swift; sourceTree = "<group>"; };
 		8777E1182C2737D9000DBB38 /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
+		8777E11A2C2739E6000DBB38 /* Tab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tab.swift; sourceTree = "<group>"; };
+		8777E11C2C273C67000DBB38 /* TabDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabDetail.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,6 +121,8 @@
 				8777E1142C273649000DBB38 /* Modal.swift */,
 				8777E1162C2736D1000DBB38 /* Detail.swift */,
 				8777E1182C2737D9000DBB38 /* Navigation.swift */,
+				8777E11A2C2739E6000DBB38 /* Tab.swift */,
+				8777E11C2C273C67000DBB38 /* TabDetail.swift */,
 			);
 			path = 03;
 			sourceTree = "<group>";
@@ -195,9 +201,11 @@
 				8777E1152C273649000DBB38 /* Modal.swift in Sources */,
 				8777E10D2C24972B000DBB38 /* OnboardingCell.swift in Sources */,
 				8777E1192C2737D9000DBB38 /* Navigation.swift in Sources */,
+				8777E11D2C273C67000DBB38 /* TabDetail.swift in Sources */,
 				8777E0F82C24896C000DBB38 /* ContentView.swift in Sources */,
 				8777E1062C248EE4000DBB38 /* Layout.swift in Sources */,
 				8777E1092C24905D000DBB38 /* MyButton.swift in Sources */,
+				8777E11B2C2739E6000DBB38 /* Tab.swift in Sources */,
 				8777E1042C248C13000DBB38 /* SimpleView.swift in Sources */,
 				8777E0F62C24896C000DBB38 /* WarmUpApp.swift in Sources */,
 				8777E1102C25EA00000DBB38 /* ListLoop.swift in Sources */,
