@@ -11,5 +11,5 @@ import Foundation
 enum PathType: Hashable {
     case home
     case todo
-    case memo
+    case memo(isCreateModel: Bool, memo: Memo?)
 }
