@@ -26,7 +26,7 @@ class VoiceRecorderViewModel: NSObject, ObservableObject, AVAudioPlayerDelegate 
   
   //음성메모된 파일
   var recordedFiles: [URL]
-
+  
   // 현재 선택된 음성메모 파일
   @Published var selectedRecordedFile: URL?
   
@@ -51,11 +51,23 @@ class VoiceRecorderViewModel: NSObject, ObservableObject, AVAudioPlayerDelegate 
     self.playedTime = playedTime
     
     self.recordedFiles = recordedFiles
+    
+    let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+    do {
+      let fileURLs = try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
+      for file in fileURLs {
+        print(file)
+        try FileManager.default.removeItem(at: file)
+      }
+    } catch {
+      print("컨텐츠 삭제에서 오류 발생")
+    }
   }
 }
 
 extension VoiceRecorderViewModel {
   func voiceRecorderCellDidTap(_ recordedFile: URL) {
+    print("🌿", #function)
     print("눌림: \(recordedFile)")
     if selectedRecordedFile != recordedFile {
       stopPlaying()
@@ -64,13 +76,14 @@ extension VoiceRecorderViewModel {
   }
   
   func removeButtonDidTap() {
-    //TODO: 삭제 얼럿 노출을 위한 상태 변경 메서드 호출
-    setIsDisplayErrorAlert(true)
+    print("🌿", #function)
+    setIsDisplayRemoveVoiceRecorderAlert(true)
   }
   
   func removeSelectedVoiceRecord() {
+    print("🌿", #function)
     guard let fileToRemove = selectedRecordedFile,
-          let indexToRemove = recordedFiles.firstIndex(of: fileToRemove) 
+          let indexToRemove = recordedFiles.firstIndex(of: fileToRemove)
     else {
       displayAlert("선택된 음성메모 파일을 찾을 수 없습니다.")
       return
@@ -90,20 +103,31 @@ extension VoiceRecorderViewModel {
   }
   
   private func setIsDisplayRemoveVoiceRecorderAlert(_ isDisplay: Bool) {
-    isDisplayRemoveVoiceRecoderAlert = isDisplay
+    print("🌿", #function)
+    DispatchQueue.main.async {
+      self.isDisplayRemoveVoiceRecoderAlert = isDisplay
+    }
   }
   
   private func setErrorAlertMessage(_ msg: String) {
-    errorAlertMessage = msg
+    DispatchQueue.main.async {
+      print("🌿", #function)
+      self.errorAlertMessage = msg
+    }
+    
   }
   
   private func setIsDisplayErrorAlert(_ isDisplay: Bool) {
-    isDisplayErrorAlert = isDisplay
+    print("🌿", #function)
+    DispatchQueue.main.async {
+      self.isDisplayErrorAlert = isDisplay
+    }
   }
   
   private func displayAlert(_ msg: String) {
-    setErrorAlertMessage(msg)
-    setIsDisplayErrorAlert(true)
+    print("🌿", #function)
+    self.setErrorAlertMessage(msg)
+    self.setIsDisplayErrorAlert(true)
   }
   
 }
@@ -111,6 +135,7 @@ extension VoiceRecorderViewModel {
 //MARK: - 음성 메모 녹음 관련
 extension VoiceRecorderViewModel {
   func recordButtonDidTap() {
+    print("🌿", #function)
     selectedRecordedFile = nil
     
     if isPlaying {
@@ -125,10 +150,11 @@ extension VoiceRecorderViewModel {
   
   
   private func startRecording() {
+    print("🌿", #function)
     let fileURL = getDocumentsDirectory().appendingPathComponent("새로운 녹음 \(recordedFiles.count + 1)")
     let settings = [
       AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-      AVSampleRateKey: 44100,
+      AVSampleRateKey: 12000,
       AVNumberOfChannelsKey: 1,
       AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
     ]
@@ -143,22 +169,25 @@ extension VoiceRecorderViewModel {
   }
   
   private func stopRecording() {
+    print("🌿", #function)
     audioRecorder?.stop()
-      self.recordedFiles.append(self.audioRecorder!.url)
+    self.recordedFiles.append(self.audioRecorder!.url)
     self.isRecording = false
     
   }
   
   private func getDocumentsDirectory() -> URL {
-      print("🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏")
+    print("🌿", #function)
+    print("🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏")
     let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-      do {
-          let files = try FileManager.default.contentsOfDirectory(atPath: paths[0].path())
-          print(files)
-      } catch {
-          fatalError()
-      }
-      print("🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏")
+    print("경로",paths[0])
+    do {
+      let files = try FileManager.default.contentsOfDirectory(atPath: paths[0].path())
+      print(files)
+    } catch {
+      print("콘텐츠가 없습니다.")
+    }
+    print("🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏")
     return paths[0]
   }
 }
@@ -168,6 +197,7 @@ extension VoiceRecorderViewModel {
 extension VoiceRecorderViewModel {
   
   func startPlaying(recordingURL: URL) {
+    print("🌿", #function)
     do {
       audioPlayer = try AVAudioPlayer(contentsOf: recordingURL)
       audioPlayer?.delegate = self
@@ -175,11 +205,13 @@ extension VoiceRecorderViewModel {
       audioPlayer?.volume = 1.0
       self.isPlaying = true
       self.isPaused = false
+      self.progressTimer?.invalidate()
+      self.progressTimer = nil
       self.progressTimer = Timer.scheduledTimer(
         withTimeInterval: 0.1,
         repeats: true
-      ) { _ in
-        self.updateCurrentTime()
+      ) { [weak self] _ in
+        self?.updateCurrentTime()
       }
     } catch {
       displayAlert("음성 메모 재생 중 오류가 발생했습니다.")
@@ -188,57 +220,98 @@ extension VoiceRecorderViewModel {
   
   private func updateCurrentTime() {
     self.playedTime = audioPlayer?.currentTime ?? 0
+    print("🌿", #function, self.playedTime)
   }
   
   private func stopPlaying() {
+    print("🌿", #function)
     audioPlayer?.stop()
     playedTime = 0
     self.progressTimer?.invalidate()
+    self.progressTimer = nil
     self.isPlaying = false
     self.isPaused = false
   }
   
   func pausePlaying() {
+    print("🌿", #function)
     audioPlayer?.pause()
-    isPaused = false
+    isPaused = true
   }
   
   func resumPlaying() {
+    print("🌿", #function)
     audioPlayer?.play()
     self.isPaused = false
   }
   
   func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+    print("🌿", #function)
     self.isPlaying = false
     self.isPaused = false
+    stopPlaying()
   }
   
   func getFileInfo(for url: URL) -> (Date?, TimeInterval?) {
-    let fileManager = FileManager.default
-    var creationDate: Date?
-    var duration: TimeInterval?
-    
-    do {
-      let fileAttributes = try fileManager.attributesOfItem(atPath: url.path)
-        
-      creationDate = fileAttributes[.creationDate] as? Date
-    } catch {
-      displayAlert("선택된 음성메모 파일 정보를 불러올 수 없습니다.")
-    }
-    
-    do {
-      let audioPlayer = try AVAudioPlayer(contentsOf: url)
-      duration = audioPlayer.duration
-    } catch {
-      displayAlert("재생 시간 불러올 수 없습니다.")
-    }
-    
-    print("creationDate:", creationDate)
-    print("duration", duration)
-    return (creationDate, duration)
+      print("🌿", #function)
+      let fileManager = FileManager.default
+      var creationDate: Date?
+      var duration: TimeInterval?
+      
+      // 파일 존재 확인
+      guard fileManager.fileExists(atPath: url.path) else {
+          displayAlert("파일이 존재하지 않습니다.")
+          return (nil, nil)
+      }
+      
+      // 파일 속성 가져오기
+      do {
+        let fileAttributes = try fileManager.attributesOfItem(atPath: url.path)
+          creationDate = fileAttributes[.creationDate] as? Date
+      } catch {
+          displayAlert("선택된 음성메모 파일 정보를 불러올 수 없습니다.")
+      }
+      
+      // 파일 재생 시간 가져오기
+      do {
+          let audioPlayer = try AVAudioPlayer(contentsOf: url)
+          duration = audioPlayer.duration
+      } catch {
+          displayAlert("재생 시간 불러올 수 없습니다.")
+      }
+      
+    print("creationDate:", creationDate?.formattedVoiceRecorderTime ?? "없음")
+    print("duration:", duration?.formattedTimeInterval ?? "없음")
+      return (creationDate, duration)
   }
   
-  
+//  func getFileInfo(for url: URL) -> (Date?, TimeInterval?) {
+//    print("🌿", #function)
+//    let fileManager = FileManager.default
+//    var creationDate: Date?
+//    var duration: TimeInterval?
+//    
+//    do {
+//      let fileAttributes = try fileManager.attributesOfItem(atPath: url.path)
+//      
+//      creationDate = fileAttributes[.creationDate] as? Date
+//    } catch {
+//      displayAlert("선택된 음성메모 파일 정보를 불러올 수 없습니다.")
+//    }
+//    
+//    do {
+//      let audioPlayer = try AVAudioPlayer(contentsOf: url)
+//      duration = audioPlayer.duration
+//    } catch {
+//      displayAlert("재생 시간 불러올 수 없습니다.")
+//    }
+//    
+//    print("creationDate:", creationDate)
+//    print("duration", duration)
+//    return (creationDate, duration)
+//  }
+//  
+//  
   
   
   

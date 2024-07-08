@@ -80,12 +80,7 @@ struct VoiceRecorderView: View {
     ) {
       Button("확인", role: .cancel) { }
     }
-    .onChange(
-      of: viewModel.recordedFiles,
-      perform: { recordedFiles in
-        //              homeViewModel.setVoiceRecordersCount(recordedFiles.count)
-      }
-    )
+
   }
 }
 
@@ -151,15 +146,6 @@ private struct VoiceRecorderCellView: View {
   private var recordedFile: URL
   private var creationDate: Date?
   private var duration: TimeInterval?
-  private var progressBarValue: Float {
-    
-    if viewModel.selectedRecordedFile == recordedFile
-        && (viewModel.isPlaying || viewModel.isPaused) {
-      return Float(viewModel.playedTime) / Float(duration ?? 1)
-    } else {
-      return 0
-    }
-  }
   
   init(
     viewModel: VoiceRecorderViewModel,
@@ -188,7 +174,7 @@ private struct VoiceRecorderCellView: View {
           HStack {
             
             if let creationDate = creationDate {
-              Text(creationDate.formattedVoiceRecorderTime) //TODO: 제목
+              Text(creationDate.formattedVoiceRecorderTime)
                 .font(.system(size: 14))
                 .foregroundStyle(.iconOn)
             }
@@ -208,7 +194,6 @@ private struct VoiceRecorderCellView: View {
             VoiceRecorderCellProgressView(
               viewModel: viewModel,
               recordedFile: recordedFile,
-              progressValue: State(initialValue: progressBarValue),
               duration: duration
             )
           }
@@ -225,24 +210,25 @@ private struct VoiceRecorderCellProgressView: View {
   
   @ObservedObject var viewModel: VoiceRecorderViewModel
   private var recordedFile: URL
-  @State private var progressValue: Float
+  private var progressValue: Float {
+    if viewModel.selectedRecordedFile == recordedFile
+        && (viewModel.isPlaying || viewModel.isPaused) {
+      return Float(viewModel.playedTime) / Float(duration ?? 1)
+    } else {
+      return 0
+    }
+  }
   private var duration: TimeInterval?
   
   
   fileprivate init(
     viewModel: VoiceRecorderViewModel,
     recordedFile: URL,
-    progressValue: State<Float>,
     duration: TimeInterval?
   ) {
     self.viewModel = viewModel
     self.recordedFile = recordedFile
-    self._progressValue = progressValue
     self.duration = duration
-  }
-  
-  func setProgressValue(_ f: Float) {
-    self.progressValue = f
   }
   
   fileprivate var body: some View {
@@ -284,7 +270,7 @@ private struct VoiceRecorderCellProgressView: View {
           
           
           Button(
-            action: {  if viewModel.isPlaying { viewModel.pausePlaying() }   }, //TODO: 일시정지
+            action: {  if viewModel.isPlaying { viewModel.pausePlaying() }   }, 
             label: { Image(systemName: "pause.fill")
               .renderingMode(.template) }
           )
