@@ -14,10 +14,10 @@ struct TimerView: View {
     var body: some View {
       
       if viewModel.isDisplaySetTimeView {
-        TimerPlayView(viewModel: viewModel)
-//        SetTimerView(viewModel: viewModel)
-      } else {
         
+        SetTimerView(viewModel: viewModel)
+      } else {
+        TimerPlayView(viewModel: viewModel)
       }
       
     }
@@ -42,6 +42,10 @@ private struct SetTimerView: View {
         Spacer()
       }
       .padding(.horizontal, 30)
+      .padding(.top, 30)
+      
+      Spacer()
+        .frame(height: 100)
       
       Divider()
       TimerPickerView(viewModel: viewModel)
@@ -54,6 +58,9 @@ private struct SetTimerView: View {
             .font(.system(size: 18, weight: .bold))
             .foregroundStyle(.key)
       })
+      .padding(.top, 10)
+      
+      Spacer()
     }
   }
 }
