@@ -9,9 +9,7 @@ import SwiftUI
 
 struct SettingView: View {
   
-  @EnvironmentObject var todoListViewModel: TodoListViewModel
-  @EnvironmentObject var memoListViewModel: MemoListViewModel
-  @EnvironmentObject var voiceRecorderViewModel: VoiceRecorderViewModel
+  @EnvironmentObject private var homeViewModel: HomeViewModel
   
   var body: some View {
     VStack {
@@ -50,14 +48,12 @@ private struct SettingTitleView: View {
 
 private struct SettingCountView: View {
   
-  @EnvironmentObject var todoListViewModel: TodoListViewModel
-  @EnvironmentObject var memoListViewModel: MemoListViewModel
-  @EnvironmentObject var voiceRecorderViewModel: VoiceRecorderViewModel
+  @EnvironmentObject private var homeViewModel: HomeViewModel
   
   private var settings: [Setting] {
-    return [.init(title: "To do", numberOfData: todoListViewModel.todos.count),
-            .init(title: "메모", numberOfData: memoListViewModel.memos.count),
-            .init(title: "음성메모", numberOfData: voiceRecorderViewModel.recordedFiles.count),
+    return [.init(title: "To do", numberOfData: homeViewModel.todosCount),
+            .init(title: "메모", numberOfData: homeViewModel.memosCount),
+            .init(title: "음성메모", numberOfData: homeViewModel.voiceRecordersCount),
     ]
   }
   
@@ -103,24 +99,22 @@ private struct SettingCountCellView: View {
 
 private struct SettingListView: View {
   
-  @EnvironmentObject var pathModel: PathModel
+  @EnvironmentObject private var homeViewModel: HomeViewModel
   
-  private var paths: [PathType] {
-    return [.todo, .memo(isCreateModel: false, memo: nil), .voice, .timer]
-  }
+  private var tabs = Tab.allCases
   
   fileprivate var body: some View {
     
       VStack() {
-        ForEach(paths, id: \.self) { path in
+        ForEach(tabs, id: \.self) { tab in
           HStack {
-            Text(path.title)
+            Text(tab.title)
               .font(.system(size: 14))
               
             Spacer()
             
             Button(
-              action: { pathModel.paths.append(path)},
+              action: { homeViewModel.changeSelectedTab(tab) },
               label: { Image(systemName: "chevron.right")}
             )
           }
@@ -140,8 +134,6 @@ private struct SettingListView: View {
 
 #Preview {
   SettingView()
-    .environmentObject(TodoListViewModel(todos: [.init(title: "", time: .init(), day: .init(), selected: false)]))
-    .environmentObject(MemoListViewModel(memos: [.mock(),.mock2()]))
-    .environmentObject(VoiceRecorderViewModel(recordedFiles: [URL(fileURLWithPath: ""), ]))
+    .environmentObject(HomeViewModel())
     .environmentObject(PathModel())
 }

@@ -9,7 +9,8 @@ import SwiftUI
 
 struct VoiceRecorderView: View {
   
-  @EnvironmentObject private var viewModel: VoiceRecorderViewModel
+  @StateObject private var viewModel = VoiceRecorderViewModel()
+  @EnvironmentObject private var homeViewModel: HomeViewModel
   @State private var isAnimation: Bool
   
   init(isAnimation: Bool = false) {
@@ -78,6 +79,9 @@ struct VoiceRecorderView: View {
       isPresented: $viewModel.isDisplayErrorAlert
     ) {
       Button("확인", role: .cancel) { }
+    }
+    .onChange(of: viewModel.recordedFiles.count) { _, newValue in
+      homeViewModel.setVoiceRecorderCount(newValue)
     }
 
   }

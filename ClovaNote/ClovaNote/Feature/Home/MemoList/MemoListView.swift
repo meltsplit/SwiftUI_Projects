@@ -11,10 +11,11 @@ struct MemoListView: View {
   
   @EnvironmentObject private var viewModel: MemoListViewModel
   @EnvironmentObject private var pathModel: PathModel
+  @EnvironmentObject private var homeViewModel: HomeViewModel
   
   var body: some View {
     
-    ZStack {
+     ZStack {
       VStack {
         if !viewModel.memos.isEmpty {
           ClovaNavigationBar(
@@ -49,6 +50,9 @@ struct MemoListView: View {
       Button("삭제", role: .destructive) { viewModel.removeSelectedMomos()}
       Button("취소", role: .cancel) { }
     })
+    .onChange(of: viewModel.memos.count) { _, newValue in
+      homeViewModel.setMemosCount(newValue)
+    }
     
   }
 }
