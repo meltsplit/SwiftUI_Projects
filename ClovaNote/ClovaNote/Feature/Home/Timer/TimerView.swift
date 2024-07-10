@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TimerView: View {
   
-  @StateObject private var viewModel = TimerViewModel()
+  @EnvironmentObject private var viewModel: TimerViewModel
   
     var body: some View {
       

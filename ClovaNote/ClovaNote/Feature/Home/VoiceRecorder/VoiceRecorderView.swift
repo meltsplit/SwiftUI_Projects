@@ -9,8 +9,7 @@ import SwiftUI
 
 struct VoiceRecorderView: View {
   
-  //  @EnvironmentObject private var homeViewModel: HomeViewModel
-  @StateObject private var viewModel = VoiceRecorderViewModel()
+  @EnvironmentObject private var viewModel: VoiceRecorderViewModel
   @State private var isAnimation: Bool
   
   init(isAnimation: Bool = false) {
