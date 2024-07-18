@@ -6,12 +6,12 @@
 //
 
 import SwiftUI
+import AuthenticationServices
 
 struct LoginView: View {
   
-  
   @Environment(\.dismiss) var dismiss
-  
+  @EnvironmentObject var authViewModel: AuthenticatedViewModel
   
   var body: some View {
     VStack(alignment: .leading) {
@@ -27,27 +27,31 @@ struct LoginView: View {
           .padding(.top, 10)
       }
       .padding(.horizontal, 30)
-        
-        
-      
       
       Spacer()
       
       Button {
-        //TODO: 구글 로그인
+        if authViewModel.isLoading {
+          print("로딩중에 눌림")
+        } else {
+          print("구글 눌림")
+        }
+        authViewModel.send(action: .googleLogin)
+        
       } label: {
           Text("Google로 로그인")
             
       }
       .buttonStyle(LoginButtonStyle(textColor: .black, borderColor: .gray))
       
-      Button {
-        //TODO: Apple 로그인
-      } label: {
-          Text("Apple로 로그인")
+      SignInWithAppleButton { request in
+        authViewModel.send(action: .appleLogin(request))
+      } onCompletion: { result in
+        authViewModel.send(action: .appleLoginCompletion(result))
       }
-      .buttonStyle(LoginButtonStyle(textColor: .black, borderColor: .gray))
-      
+      .frame(height: 40)
+      .padding(.horizontal, 15)
+      .cornerRadius(5)
     }
     .navigationBarBackButtonHidden()
     .toolbar {
@@ -60,10 +64,19 @@ struct LoginView: View {
         }
       }
     }
+    .overlay {
+      if authViewModel.isLoading {
+        Color.black.opacity(0.4)
+                  .edgesIgnoringSafeArea(.all)
+        
+        ProgressView()
+      }
+    }
     
   }
 }
 
 #Preview {
   LoginView()
+    .environmentObject(AuthenticatedViewModel(container: DIContainer(service: Service(authService: AuthenticationService()))))
 }

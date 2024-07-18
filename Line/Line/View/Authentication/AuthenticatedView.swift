@@ -16,6 +16,7 @@ struct AuthenticatedView: View {
       switch authViewModel.authenticated {
       case .unauthenticated:
         LoginIntroView()
+          .environmentObject(authViewModel)
       case .authenticated:
         MainTabView()
       }
