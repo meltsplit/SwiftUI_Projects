@@ -98,6 +98,7 @@ class AuthenticatedViewModel: ObservableObject {
           self?.authenticated = .unauthenticated
           self?.userId = nil
         }
+        .store(in: &subscriptions)
 
     }
   }

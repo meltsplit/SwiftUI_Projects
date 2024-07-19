@@ -14,3 +14,13 @@ struct User {
   var profileURL: String?
   var description: String?
 }
+
+extension User {
+  static var stub1: User {
+    .init(id: "uid_1", name: "장석우")
+  }
+  
+  static var stub2: User {
+    .init(id: "uid_1", name: "이유진")
+  }
+}
