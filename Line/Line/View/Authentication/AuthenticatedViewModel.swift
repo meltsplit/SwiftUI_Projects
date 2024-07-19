@@ -17,9 +17,11 @@ enum AuthenticationState {
 class AuthenticatedViewModel: ObservableObject {
   
   enum Action {
+    case checkAuthorizationState
     case googleLogin
     case appleLogin(ASAuthorizationAppleIDRequest)
     case appleLoginCompletion(Result<ASAuthorization, Error>)
+    case logout
   }
   
   @Published var authenticated: AuthenticationState = .unauthenticated
@@ -37,6 +39,13 @@ class AuthenticatedViewModel: ObservableObject {
   
   func send(action: Action) {
     switch action {
+    case .checkAuthorizationState:
+      if let userID = container.service.authService.checkAuthenticationState() {
+        self.userId = userID
+        self.authenticated = .authenticated
+      }
+      
+      
     case .googleLogin:
       isLoading = true
       container.service.authService.signInWithGoogle()
@@ -45,9 +54,11 @@ class AuthenticatedViewModel: ObservableObject {
             self?.isLoading = false
           }
           //TODO: 실패
+          
         } receiveValue: { [weak self] user in
           self?.userId = user.id
           self?.isLoading = false
+          self?.authenticated = .authenticated
         }
         .store(in: &subscriptions)
       // Sink 시 Subscription이 return 됨,
@@ -71,6 +82,7 @@ class AuthenticatedViewModel: ObservableObject {
           } receiveValue: { [weak self] user in
             self?.isLoading = false
             self?.userId = user.id
+            self?.authenticated = .authenticated
           }
           .store(in: &subscriptions)
       } else if case let .failure(error) = result {
@@ -78,6 +90,15 @@ class AuthenticatedViewModel: ObservableObject {
         print(error.localizedDescription)
       }
       return
+    case .logout:
+      container.service.authService.logout()
+        .sink { completion in
+          
+        } receiveValue: { [weak self] _ in
+          self?.authenticated = .unauthenticated
+          self?.userId = nil
+        }
+
     }
   }
   

@@ -13,13 +13,19 @@ struct AuthenticatedView: View {
   @StateObject var authViewModel: AuthenticatedViewModel
   
     var body: some View {
-      switch authViewModel.authenticated {
-      case .unauthenticated:
-        LoginIntroView()
-          .environmentObject(authViewModel)
-      case .authenticated:
-        MainTabView()
+      VStack {
+        switch authViewModel.authenticated {
+        case .unauthenticated:
+          LoginIntroView()
+            .environmentObject(authViewModel)
+        case .authenticated:
+          MainTabView()
+        }
       }
+      .onAppear {
+        authViewModel.send(action: .checkAuthorizationState)
+      }
+      
     }
 }
 
