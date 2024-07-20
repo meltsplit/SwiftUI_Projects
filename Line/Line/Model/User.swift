@@ -33,7 +33,7 @@ extension User {
   }
   
   static var stub2: User {
-    .init(id: "uid_1", name: "이유진")
+    .init(id: "uid_2", name: "이유진")
   }
   
 }

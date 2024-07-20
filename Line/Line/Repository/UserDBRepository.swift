@@ -12,6 +12,7 @@ import FirebaseDatabase
 protocol UserDBRepositoryType {
   func addUser(_ object: UserObject) -> AnyPublisher<Void, DBError>
   func getUser(userID: String) -> AnyPublisher<UserObject, DBError>
+  func loadUsers() -> AnyPublisher<[UserObject], DBError>
 }
 
 class UserDBRepository: UserDBRepositoryType {
@@ -54,18 +55,36 @@ class UserDBRepository: UserDBRepositoryType {
         }
       }
     }
-    .flatMap { value in
-      if let value {
-        return Just(value)
+    .flatMap { value -> AnyPublisher<UserObject, DBError> in
+      guard let value else { return Fail(error: DBError.emptyValue).eraseToAnyPublisher() }
+      return Just(value)
           .tryMap { try JSONSerialization.data(withJSONObject: $0) }
           .decode(type: UserObject.self, decoder: JSONDecoder())
           .mapError { DBError.error($0)}
           .eraseToAnyPublisher()
-      } else {
-        return Fail(error: DBError.emptyValue).eraseToAnyPublisher()
-      }
     }.eraseToAnyPublisher()
   }
   
+  func loadUsers() -> AnyPublisher<[UserObject], DBError> {
+    Future<Any?, DBError> { [weak self] promise in
+      self?.db.child(DBKey.Users).getData { error, snapshot in
+        if let error { promise(.failure(.error(error)))}
+        else if snapshot?.value is NSNull { promise(.failure(.emptyValue))}
+        else { promise(.success(snapshot?.value)) }
+      }
+    }
+    .flatMap { value -> AnyPublisher<[UserObject], DBError> in
+      guard let dic = value as? [String: [String: Any]]
+      else { return Fail(error: DBError.emptyValue).eraseToAnyPublisher() }
+      return Just(dic)
+        .tryMap { try JSONSerialization.data(withJSONObject: $0) }
+        .decode(type: [String: UserObject].self, decoder: JSONDecoder())
+        .map { Array($0.values) }
+        .mapError { DBError.error($0) }
+        .eraseToAnyPublisher()
+      
+    }
+    .eraseToAnyPublisher()
+  }
   
 }

@@ -7,55 +7,77 @@
 
 import SwiftUI
 
-struct HomeView: View {
+struct
+HomeView: View {
   
   @StateObject var viewModel : HomeViewModel
   @State var searchTextFieldText: String = ""
   
   var body: some View {
     NavigationStack {
-      ScrollView {
-        
-        Group {
-          profileView
-          searchView
-          
-          HStack {
-            Text("친구")
-              .font(.system(size: 14, weight: .bold))
-              .foregroundStyle(.black)
-            Spacer()
+      contentView
+        .fullScreenCover(item: $viewModel.modalDestination) {
+          switch $0 {
+          case .myProfile:
+            MyProfileView()
+          case let .otherProfile(userID):
+            OtherProfileView()
           }
-          .padding(.top, 20)
-
-          if viewModel.friends.isEmpty {
-            Spacer(minLength: 89)
-            emptyView
-          } else {
-            Spacer(minLength: 20)
-            friendView
+        }
+    }
+  }
+  
+  @ViewBuilder
+  var contentView: some View {
+    switch viewModel.phase {
+    case .notRequested: PlaceholderView()
+        .onAppear {
+          viewModel.send(action: .load)
+        }
+    case .loading: LoadingView()
+    case .success: mainView
+        .toolbar {
+          Image(systemName: "bookmark")
+          Image(systemName: "bell")
+          Image(systemName: "person.badge.plus")
+          Button {
+            
+          } label: {
+            Image(systemName: "gearshape")
           }
+          .foregroundStyle(.black)
           
         }
-        .padding(.horizontal, 35)
-        
-      }
+    case .fail: ErrorView()
+    }
+  }
+  
+  var mainView: some View {
+    ScrollView {
       
-      .toolbar {
-        Image(systemName: "bookmark")
-        Image(systemName: "bell")
-        Image(systemName: "person.badge.plus")
-        Button {
-          
-        } label: {
-          Image(systemName: "gearshape")
+      Group {
+        profileView
+        searchView
+        
+        HStack {
+          Text("친구")
+            .font(.system(size: 14, weight: .bold))
+            .foregroundStyle(.black)
+          Spacer()
         }
-        .foregroundStyle(.black)
+        .padding(.top, 20)
+        
+        if viewModel.friends.isEmpty {
+          Spacer(minLength: 89)
+          emptyView
+        } else {
+          Spacer(minLength: 20)
+          friendsView
+        }
         
       }
-      .onAppear {
-        viewModel.send(action: .getUser)
-      }
+      .padding(.horizontal, 35)
+      
     }
   }
   
@@ -80,12 +102,11 @@ struct HomeView: View {
         .frame(width: 42, height: 42)
         .background(.blue.opacity(0.4))
         .clipShape(Circle())
-        
-
-        
-        
     }
     .padding(.top, 24)
+    .onTapGesture {
+      viewModel.send(action: .presentMyProfileView)
+    }
   }
   
   var searchView: some View {
@@ -97,23 +118,31 @@ struct HomeView: View {
     .padding(.top, 30)
   }
   
-  var friendView: some View {
-    ForEach(viewModel.friends, id: \.id) { user in
-      HStack(spacing: 8) {
-        Image(systemName: "person")
-          .resizable()
-          .frame(width: 40, height: 40)
-          .background(.blue.opacity(0.5))
-          .clipShape(Circle())
+  var friendsView: some View {
+    LazyVStack {
+      ForEach(viewModel.friends, id: \.id) { user in
+        Button {
+          viewModel.send(action: .presentOtherProfileView(user.id))
+        } label: {
+          HStack(spacing: 8) {
+            Image(systemName: "person")
+              .resizable()
+              .frame(width: 40, height: 40)
+              .background(.blue.opacity(0.5))
+              .clipShape(Circle())
+            
+            Text(user.name)
+              .font(.system(size: 12))
+              .foregroundStyle(.black)
+            Spacer()
+          }
+          .padding(.vertical, 5)
+        }
         
-        Text(user.name)
-          .font(.system(size: 12))
-          .foregroundStyle(.black)
-        Spacer()
       }
-      .padding(.vertical, 5)
       
     }
+    
   }
   
   var emptyView: some View {
@@ -126,9 +155,9 @@ struct HomeView: View {
         .foregroundStyle(.gray)
         .padding()
         .padding(.bottom, 30)
-        
+      
       Button {
-//        viewModel.send(action: .addFriendButtonDidTap)
+        //        viewModel.send(action: .addFriendButtonDidTap)
       } label: {
         Text("친구추가")
           .font(.system(size: 17, weight: .bold))
