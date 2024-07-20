@@ -1,13 +1,13 @@
 //
-//  User.swift
+//  UserObject.swift
 //  Line
 //
-//  Created by 장석우 on 7/18/24.
+//  Created by 장석우 on 7/19/24.
 //
 
 import Foundation
 
-struct User {
+struct UserObject: Codable {
   var id: String
   var name: String
   var phoneNumber: String?
@@ -15,8 +15,8 @@ struct User {
   var description: String?
 }
 
-extension User {
-  func toObject() -> UserObject {
+extension UserObject {
+  func toModel() -> User {
     .init(
       id: id,
       name: name,
@@ -25,15 +25,4 @@ extension User {
       description: description
     )
   }
-}
-
-extension User {
-  static var stub1: User {
-    .init(id: "uid_1", name: "장석우")
-  }
-  
-  static var stub2: User {
-    .init(id: "uid_1", name: "이유진")
-  }
-  
 }

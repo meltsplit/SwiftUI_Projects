@@ -18,8 +18,6 @@ struct HomeView: View {
         
         Group {
           profileView
-          
-          
           searchView
           
           HStack {
@@ -29,9 +27,6 @@ struct HomeView: View {
             Spacer()
           }
           .padding(.top, 20)
-         
-          
-          
 
           if viewModel.friends.isEmpty {
             Spacer(minLength: 89)
@@ -57,6 +52,9 @@ struct HomeView: View {
         }
         .foregroundStyle(.black)
         
+      }
+      .onAppear {
+        viewModel.send(action: .getUser)
       }
     }
   }
@@ -130,7 +128,7 @@ struct HomeView: View {
         .padding(.bottom, 30)
         
       Button {
-        viewModel.send(action: .addFriendButtonDidTap)
+//        viewModel.send(action: .addFriendButtonDidTap)
       } label: {
         Text("친구추가")
           .font(.system(size: 17, weight: .bold))
@@ -148,5 +146,5 @@ struct HomeView: View {
 }
 
 #Preview {
-  HomeView(viewModel: .init())
+  HomeView(viewModel: .init(container: .init(service: StubService()), userID: ""))
 }
