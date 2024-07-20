@@ -10,6 +10,13 @@ import Combine
 
 class HomeViewModel: ObservableObject {
   
+  enum Action {
+    case load
+    case requestContacts
+    case presentMyProfileView
+    case presentOtherProfileView(String) // Associated Type이라고 부르더라
+  }
+  
   @Published var myUser: User?
   @Published var friends: [User] = []
   @Published var phase: Phase = .notRequested
@@ -23,12 +30,6 @@ class HomeViewModel: ObservableObject {
   init(container: DIContainer, userID: String) {
     self.container = container
     self.userID = userID
-  }
-  
-  enum Action {
-    case load
-    case presentMyProfileView
-    case presentOtherProfileView(String) // Associated Type이라고 부르더라
   }
   
 
@@ -51,6 +52,19 @@ class HomeViewModel: ObservableObject {
           self?.friends = users
         }
         .store(in: &subscriptions)
+      
+    case .requestContacts:
+      container.service.contactService.fetchContact()
+        .flatMap(container.service.userService.addUserAfterContact)
+        .map { self.userID }
+        .flatMap(container.service.userService.loadUser)
+        .sink { completion in
+          //TODO:
+        } receiveValue: { [weak self] users in
+          self?.friends = users
+        }
+        .store(in: &subscriptions)
+
       
     case .presentMyProfileView:
       modalDestination = .myProfile

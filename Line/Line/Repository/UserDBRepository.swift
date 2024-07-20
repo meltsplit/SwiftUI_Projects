@@ -13,6 +13,7 @@ protocol UserDBRepositoryType {
   func addUser(_ object: UserObject) -> AnyPublisher<Void, DBError>
   func getUser(userID: String) -> AnyPublisher<UserObject, DBError>
   func loadUsers() -> AnyPublisher<[UserObject], DBError>
+  func addUserAfterContact(users: [UserObject]) -> AnyPublisher<Void, DBError>
 }
 
 class UserDBRepository: UserDBRepositoryType {
@@ -85,6 +86,29 @@ class UserDBRepository: UserDBRepositoryType {
       
     }
     .eraseToAnyPublisher()
+  }
+  
+  func addUserAfterContact(users: [UserObject]) -> AnyPublisher<Void, DBError> {
+    Publishers.Zip(users.publisher, users.publisher)
+      .tryCompactMap { (origin, converted) -> (UserObject, Data) in
+        let converted = try JSONEncoder().encode(converted)
+        return (origin, converted)
+      }
+      .tryCompactMap { (origin, converted) -> (UserObject, Any) in
+        let converted = try JSONSerialization.jsonObject(with: converted)
+        return (origin, converted)
+      }
+      .flatMap { (origin, converted) -> Future<Void, Error> in
+        Future<Void,Error> { [weak self] promise in
+          self?.db.child(DBKey.Users).child(origin.id).setValue(converted) { error, _ in
+            if let error { promise(.failure(error))}
+            else { promise(.success(()))}
+          }
+        }
+      }
+      .last()
+      .mapError { DBError.error($0) }
+      .eraseToAnyPublisher()
   }
   
 }
