@@ -10,18 +10,30 @@ import SwiftUI
 struct HomeView: View {
     
   @EnvironmentObject var container: DIContainer
+  @EnvironmentObject var navigationRouter: NavigationRouter
   @StateObject var viewModel : HomeViewModel
   @State var searchTextFieldText: String = ""
   
   var body: some View {
-    NavigationStack {
+    NavigationStack(path: $navigationRouter.destinations) {
       contentView
         .fullScreenCover(item: $viewModel.modalDestination) {
           switch $0 {
           case .myProfile:
               MyProfileView(viewModel: MyProfileViewModel(container: container, userID: viewModel.userID))
-          case .otherProfile(_):
-            OtherProfileView()
+          case let .otherProfile(userID):
+            OtherProfileView(viewModel: .init(container: container, userID: userID)) {
+              otherUser in
+              viewModel.send(action: .goToChat(otherUser))
+            }
+          }
+        }
+        .navigationDestination(for: NavigationDestination.self) {
+          switch $0 {
+          case .chat:
+            ChatView()
+          case .search:
+            SearchView()
           }
         }
     }
@@ -57,7 +69,9 @@ struct HomeView: View {
       
       Group {
         profileView
+          .padding(.bottom, 10)
         searchView
+          
         
         HStack {
           Text("친구")
@@ -110,12 +124,20 @@ struct HomeView: View {
   }
   
   var searchView: some View {
-    TextField("검색",
-              text: $searchTextFieldText)
-    .frame(height: 36)
-    .foregroundStyle(.black)
-    .background(.gray.opacity(0.3))
-    .padding(.top, 30)
+    NavigationLink(value: NavigationDestination.search) {
+      ZStack {
+        RoundedRectangle(cornerRadius: 4)
+          .fill(Color.gray.opacity(0.4))
+          .frame(height: 36)
+        HStack {
+          Text("검색")
+            .foregroundStyle(.black)
+            .padding(.horizontal, 15)
+          
+          Spacer()
+        }
+      }
+    }
   }
   
   var friendsView: some View {
@@ -175,6 +197,8 @@ struct HomeView: View {
 }
 
 #Preview {
-  HomeView(viewModel: .init(container: .init(service: StubService()), userID: ""))
+  
+  HomeView(viewModel: .init(container: .init(service: StubService()), navigationRouter: .init(), userID: ""))
         .environmentObject(DIContainer(service: StubService()))
+        .environmentObject(NavigationRouter())
 }

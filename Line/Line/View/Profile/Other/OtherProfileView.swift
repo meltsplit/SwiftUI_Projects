@@ -1,5 +1,5 @@
 //
-//  MyProfileView.swift
+//  OtherProfileView.swift
 //  Line
 //
 //  Created by 장석우 on 7/20/24.
@@ -8,12 +8,12 @@
 import SwiftUI
 import PhotosUI
 
-struct MyProfileView: View {
+struct OtherProfileView: View {
   
-  @StateObject var viewModel: MyProfileViewModel
   @Environment(\.dismiss) var dismiss
+  @StateObject var viewModel: OtherProfileViewModel
   
-  @State var isPresentedDescriptionView: Bool = false
+  var goToChat: (User) -> Void
   
   var body: some View {
     
@@ -51,34 +51,16 @@ struct MyProfileView: View {
         }
       }
       .task {
-        print("🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏🙏")
         await viewModel.getUser()
-      }
-      .sheet(isPresented: $isPresentedDescriptionView) {
-        MyProfileDescriptionView(description: viewModel.user?.description ?? "") { description in
-          Task {
-            await viewModel.updateDescription(description)
-          }
-          
-        }
       }
     }
   }
   
   var profileView: some View {
     VStack {
-      PhotosPicker(
-        selection: $viewModel.imageSelection,
-        matching: .images
-      ) {
-        
-        URLImageView(urlString: viewModel.user?.profileURL)
-          .frame(width: 80, height: 80)
-          .clipShape(Circle())
-        
-      }
-      
-      
+      URLImageView(urlString: viewModel.user?.profileURL)
+        .frame(width: 80, height: 80)
+        .clipShape(Circle())
       
       Text(viewModel.user?.name ?? "")
         .font(.system(size: 26, weight: .bold))
@@ -87,37 +69,28 @@ struct MyProfileView: View {
       Spacer()
         .frame(height: 20)
       
-      Button {
-        isPresentedDescriptionView = true
-      } label: {
-        Text(viewModel.user?.description ?? "상태메시지를 입력해주세요")
-          .font(.system(size: 18))
-          .foregroundStyle(.white)
-      }
+      Text(viewModel.user?.description ?? "상태메시지를 입력해주세요")
+        .font(.system(size: 18))
+        .foregroundStyle(.white)
       
     }
   }
   
   var menuView: some View {
-    let menus: [[String]] =
-    [
-      ["face.smiling.fill", "스튜디오"],
-      ["paintpalette.fill", "꾸미기"],
-      ["bookmark.fill","Keep"],
-      ["play.circle.fill","스토리"]
-    ]
-    
-    return HStack(spacing: 30) {
-      ForEach(menus, id: \.self) { menu in
+    HStack(spacing: 30) {
+      ForEach(OtherProfileMenuType.allCases, id: \.self) { menu in
         Button {
-          
+          if menu == .chat, let user = viewModel.user {
+            dismiss()
+            goToChat(user)
+          }
         } label: {
           VStack {
-            Image(systemName: menu[0])
+            Image(systemName: menu.imageName)
               .resizable()
               .scaledToFit()
               .frame(width: 30, height: 30)
-            Text(menu[1])
+            Text(menu.description)
           }
           .foregroundStyle(.white)
         }
@@ -128,11 +101,11 @@ struct MyProfileView: View {
 }
 
 #Preview {
-  MyProfileView(
-    viewModel: MyProfileViewModel(
+  OtherProfileView(
+    viewModel: OtherProfileViewModel(
       container: DIContainer(
         service: StubService()
       ),
-      userID: "uid_1")
+      userID: "uid_1"), goToChat: { _ in }
   )
 }

@@ -15,6 +15,7 @@ class HomeViewModel: ObservableObject {
     case requestContacts
     case presentMyProfileView
     case presentOtherProfileView(String) // Associated Type이라고 부르더라
+    case goToChat(User)
   }
   
   @Published var myUser: User?
@@ -22,13 +23,20 @@ class HomeViewModel: ObservableObject {
   @Published var phase: Phase = .notRequested
   @Published var modalDestination: HomeModalDestination?
   
+  
   var userID: String
   private var container: DIContainer
+  private var navigationRouter: NavigationRouter
   private var subscriptions = Set<AnyCancellable>()
   
   
-  init(container: DIContainer, userID: String) {
+  init(
+    container: DIContainer,
+    navigationRouter: NavigationRouter,
+    userID: String
+  ) {
     self.container = container
+    self.navigationRouter = navigationRouter
     self.userID = userID
   }
   
@@ -70,6 +78,16 @@ class HomeViewModel: ObservableObject {
       modalDestination = .myProfile
     case let .presentOtherProfileView(userID):
       modalDestination = .otherProfile(userID)
+    case let .goToChat(otherUser):
+      container.service.chatRoomService.createChatRoomIfNeeded(myUserID: userID, otherUserID: otherUser.id, otherUserName: otherUser.name)
+        .sink { completion in
+          //TODO:
+          return
+        } receiveValue: { [weak self] chatRoom in
+          self?.navigationRouter.push(to: .chat)
+        }
+        .store(in: &subscriptions)
+
     }
   }
   
