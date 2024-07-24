@@ -78,5 +78,5 @@ struct LoginView: View {
 
 #Preview {
   LoginView()
-    .environmentObject(AuthenticatedViewModel(container: DIContainer(service: Service(authService: AuthenticationService()))))
+    .environmentObject(AuthenticatedViewModel(container: DIContainer(service: StubService())))
 }

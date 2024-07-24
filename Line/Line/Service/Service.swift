@@ -11,6 +11,9 @@ protocol ServiceType {
   var authService: AuthenticationServiceType { get set }
   var userService: UserServiceType { get set }
   var contactService: ContactServiceType { get set }
+  var photoService: PhotoServiceType { get set }
+  var uploadService: UploadServiceType { get set }
+  var imageCacheService: ImageCacheServiceType { get set }
 }
 
 class Service: ServiceType {
@@ -18,15 +21,17 @@ class Service: ServiceType {
   var authService: AuthenticationServiceType
   var userService: UserServiceType
   var contactService: ContactServiceType
+  var photoService: PhotoServiceType
+  var uploadService: UploadServiceType
+  var imageCacheService: ImageCacheServiceType
   
-  init(
-    authService: AuthenticationServiceType = AuthenticationService(),
-    userService: UserServiceType = UserService(dbRepository: UserDBRepository()),
-    contactService: ContactServiceType = ContactService()
-  ) {
-    self.authService = authService
-    self.userService = userService
-    self.contactService = contactService
+  init() {
+    self.authService = AuthenticationService()
+    self.userService = UserService(dbRepository: UserDBRepository())
+    self.contactService = ContactService()
+    self.photoService = PhotoService()
+    self.uploadService = UploadService(provider: UploadProvider())
+    self.imageCacheService = ImageCacheService(memoryStorage: MemoryStorage(), diskStorage: DiskStorage())
   }
   
 }
@@ -34,18 +39,11 @@ class Service: ServiceType {
 
 class StubService: ServiceType {
   
-  var authService: AuthenticationServiceType
-  var userService: UserServiceType
-  var contactService: ContactServiceType
-  
-  init(
-    authService: AuthenticationServiceType = StubAuthenticationService(),
-    userService: UserServiceType = StubUserService(),
-    contactService: ContactServiceType = StubContactService()
-  ) {
-    self.authService = authService
-    self.userService = userService
-    self.contactService = contactService
-  }
-  
+  var authService: AuthenticationServiceType = StubAuthenticationService()
+  var userService: UserServiceType = StubUserService()
+  var contactService: ContactServiceType = StubContactService()
+  var photoService: PhotoServiceType = StubPhotoService()
+  var uploadService: UploadServiceType = StubUploadService()
+  var imageCacheService: ImageCacheServiceType = StubImageCacheService()
+
 }

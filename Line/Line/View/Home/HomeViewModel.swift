@@ -22,7 +22,7 @@ class HomeViewModel: ObservableObject {
   @Published var phase: Phase = .notRequested
   @Published var modalDestination: HomeModalDestination?
   
-  private var userID: String
+  var userID: String
   private var container: DIContainer
   private var subscriptions = Set<AnyCancellable>()
   

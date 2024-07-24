@@ -12,6 +12,8 @@ import FirebaseDatabase
 protocol UserDBRepositoryType {
   func addUser(_ object: UserObject) -> AnyPublisher<Void, DBError>
   func getUser(userID: String) -> AnyPublisher<UserObject, DBError>
+  func getUser(userID: String) async throws -> UserObject
+  func updateUser(userID: String, key: String, value: Any) async throws
   func loadUsers() -> AnyPublisher<[UserObject], DBError>
   func addUserAfterContact(users: [UserObject]) -> AnyPublisher<Void, DBError>
 }
@@ -22,7 +24,7 @@ class UserDBRepository: UserDBRepositoryType {
   
   func addUser(_ object: UserObject) -> AnyPublisher<Void, DBError> {
     // 파베에 데이터 쓰려면 Dictionary 형태
-    // oject -> data
+    // object -> data
     // data -> JSONSerialization
     Just(object)
       .compactMap { try? JSONEncoder().encode($0) }
@@ -64,6 +66,27 @@ class UserDBRepository: UserDBRepositoryType {
           .mapError { DBError.error($0)}
           .eraseToAnyPublisher()
     }.eraseToAnyPublisher()
+  }
+  
+  func getUser(userID: String) async throws -> UserObject {
+    guard let value = try await self.db
+                                    .child(DBKey.Users)
+                                    .child(userID)
+                                    .getData()
+                                    .value
+    else { throw DBError.emptyValue }
+    
+    let data = try JSONSerialization.data(withJSONObject: value)
+    let object = try JSONDecoder().decode(UserObject.self, from: data)
+    return object
+  }
+  
+  func updateUser(userID: String, key: String, value: Any) async throws {
+    try await self.db.child(DBKey.Users)
+                     .child(userID)
+                     .child(key)
+                     .setValue(value)
+                                    
   }
   
   func loadUsers() -> AnyPublisher<[UserObject], DBError> {

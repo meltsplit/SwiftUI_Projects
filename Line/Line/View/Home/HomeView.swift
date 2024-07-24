@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct
-HomeView: View {
-  
+struct HomeView: View {
+    
+  @EnvironmentObject var container: DIContainer
   @StateObject var viewModel : HomeViewModel
   @State var searchTextFieldText: String = ""
   
@@ -19,8 +19,8 @@ HomeView: View {
         .fullScreenCover(item: $viewModel.modalDestination) {
           switch $0 {
           case .myProfile:
-            MyProfileView()
-          case let .otherProfile(userID):
+              MyProfileView(viewModel: MyProfileViewModel(container: container, userID: viewModel.userID))
+          case .otherProfile(_):
             OtherProfileView()
           }
         }
@@ -176,4 +176,5 @@ HomeView: View {
 
 #Preview {
   HomeView(viewModel: .init(container: .init(service: StubService()), userID: ""))
+        .environmentObject(DIContainer(service: StubService()))
 }

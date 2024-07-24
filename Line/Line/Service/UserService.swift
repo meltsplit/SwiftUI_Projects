@@ -12,12 +12,14 @@ protocol UserServiceType {
   func addUser(_ user: User) -> AnyPublisher<User, ServiceError>
   func addUserAfterContact(users: [User]) -> AnyPublisher<Void, ServiceError>
   func getUser(userID: String) -> AnyPublisher<User, ServiceError>
+  func getUser(userID: String) async throws -> User
   func loadUser(id: String) -> AnyPublisher<[User], ServiceError>
+  func updateDescription(userID: String, description: String) async throws
+  func updateProfile(userID: String, urlString: String) async throws
   
 }
 
 class UserService: UserServiceType {
-
   
   private var dbRepository: UserDBRepositoryType
   
@@ -45,6 +47,20 @@ class UserService: UserServiceType {
       .eraseToAnyPublisher()
   }
   
+  func getUser(userID: String) async throws -> User {
+    let object = try await dbRepository.getUser(userID: userID)
+    return object.toModel()
+  }
+  
+  func updateDescription(userID: String, description: String) async throws {
+    try await dbRepository.updateUser(userID: userID, key: DBKey.description, value: description)
+  }
+  
+  func updateProfile(userID: String, urlString: String) async throws {
+    try await dbRepository.updateUser(userID: userID, key: DBKey.profileURL, value: urlString)
+  }
+
+  
   func loadUser(id: String) -> AnyPublisher<[User], ServiceError> {
     dbRepository.loadUsers()
       .map {
@@ -59,8 +75,9 @@ class UserService: UserServiceType {
 }
 
 class StubUserService: UserServiceType {
-
   
+  
+
   func addUser(_ user: User) -> AnyPublisher<User, ServiceError> {
     Empty().eraseToAnyPublisher()
   }
@@ -73,10 +90,23 @@ class StubUserService: UserServiceType {
     Just(.stub1).setFailureType(to: ServiceError.self).eraseToAnyPublisher()
   }
   
+  func getUser(userID: String) async throws -> User {
+    .stub1
+  }
+  
   func loadUser(id: String) -> AnyPublisher<[User], ServiceError> {
     Just([.stub1, .stub2])
       .setFailureType(to: ServiceError.self)
       .eraseToAnyPublisher()
+  }
+  
+  
+  func updateDescription(userID: String, description: String) async throws {
+    return
+  }
+  
+  func updateProfile(userID: String, urlString: String) async throws {
+    return
   }
   
 }
