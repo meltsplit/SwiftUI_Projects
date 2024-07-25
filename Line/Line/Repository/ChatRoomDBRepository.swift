@@ -12,6 +12,7 @@ import FirebaseDatabase
 protocol ChatRoomDBRepositoryType {
   func getChatRoom(myUserID: String, otherUserID: String) -> AnyPublisher<ChatRoomObject?, DBError>
   func addChatRoom(_ object: ChatRoomObject, myUserID: String) -> AnyPublisher<Void, DBError>
+  func loadChatRooms(myUserID: String) -> AnyPublisher<[ChatRoomObject], DBError>
 }
 
 class ChatRoomDBRepository: ChatRoomDBRepositoryType {
@@ -59,9 +60,32 @@ class ChatRoomDBRepository: ChatRoomDBRepositoryType {
       .eraseToAnyPublisher()
   }
   
+  func loadChatRooms(myUserID: String) -> AnyPublisher<[ChatRoomObject], DBError> {
+    Future<Any?, DBError> { [weak self] promise in
+      self?.db.child(DBKey.ChatRooms).child(myUserID).getData { error, snapshot in
+        if let error { promise(.failure(.error(error)))}
+        else if snapshot?.value is NSNull { promise(.success(nil))}
+        else { promise(.success(snapshot?.value))}
+      }
+    }
+    .flatMap { value in
+      guard let dic = value as? [String: [String: Any]]
+      else { return Just<[ChatRoomObject]>([]).setFailureType(to: DBError.self).eraseToAnyPublisher() }
+      return Just(dic)
+        .tryMap { try JSONSerialization.data(withJSONObject: $0) }
+        .decode(type: [String: ChatRoomObject].self, decoder: JSONDecoder())
+        .map { $0.values.map { $0 as ChatRoomObject} }
+        .mapError { DBError.error($0)}
+        .eraseToAnyPublisher()
+    }
+    .eraseToAnyPublisher()
+  }
+  
 }
 
+
 class StubChatRoomDBRepository: ChatRoomDBRepositoryType {
+
   func getChatRoom(myUserID: String, otherUserID: String) -> AnyPublisher<ChatRoomObject?, DBError> {
     Empty().eraseToAnyPublisher()
   }
@@ -70,6 +94,8 @@ class StubChatRoomDBRepository: ChatRoomDBRepositoryType {
     Empty().eraseToAnyPublisher()
   }
   
-  
+  func loadChatRooms(myUserID: String) -> AnyPublisher<[ChatRoomObject], DBError> {
+    Empty().eraseToAnyPublisher()
+  }
   
 }

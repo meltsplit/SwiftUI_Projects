@@ -29,12 +29,7 @@ struct HomeView: View {
           }
         }
         .navigationDestination(for: NavigationDestination.self) {
-          switch $0 {
-          case .chat:
-            ChatView()
-          case .search:
-            SearchView()
-          }
+          NavigationRoutingView(destination: $0)
         }
     }
   }
@@ -125,18 +120,7 @@ struct HomeView: View {
   
   var searchView: some View {
     NavigationLink(value: NavigationDestination.search) {
-      ZStack {
-        RoundedRectangle(cornerRadius: 4)
-          .fill(Color.gray.opacity(0.4))
-          .frame(height: 36)
-        HStack {
-          Text("검색")
-            .foregroundStyle(.black)
-            .padding(.horizontal, 15)
-          
-          Spacer()
-        }
-      }
+      SearchButton()
     }
   }
   

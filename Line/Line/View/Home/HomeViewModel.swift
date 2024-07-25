@@ -84,7 +84,11 @@ class HomeViewModel: ObservableObject {
           //TODO:
           return
         } receiveValue: { [weak self] chatRoom in
-          self?.navigationRouter.push(to: .chat)
+          guard let self else { return }
+          self.navigationRouter.push(to: .chat(chatRoomID: chatRoom.chatRoomID,
+                                                myUserID: self.userID,
+                                                otherUserID: otherUser.id
+                                               ))
         }
         .store(in: &subscriptions)
 
