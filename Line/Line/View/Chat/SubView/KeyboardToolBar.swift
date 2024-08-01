@@ -33,7 +33,7 @@ struct KeyboardToolBar<ToolbarView: View>: ViewModifier {
 }
 
 extension View {
-  func `keyboardToolbar<ToolbarView>(height: CGFloat, view: @escaping () -> ToolbarView) -> some View where ToolbarView: View {
+  func keyboardToolbar<ToolbarView>(height: CGFloat, view: @escaping () -> ToolbarView) -> some View where ToolbarView: View {
     modifier(KeyboardToolBar(height: height, toolbarView: view))
   }
 }

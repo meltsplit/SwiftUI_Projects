@@ -14,4 +14,27 @@ struct Chat: Hashable, Identifiable {
   var message: String?
   var photoURL: String?
   var date: Date
+  
+  var lastMessage: String {
+    if let message {
+      return message
+    } else if let _ = photoURL {
+      return "사진"
+    } else {
+      return "내용없음"
+    }
+    
+  }
+}
+
+extension Chat {
+  func toObject() -> ChatObject {
+    .init(chatID: chatID,
+          userID: userID,
+          message: message,
+          photoURL: photoURL,
+          date: date.timeIntervalSince1970)
+  }
+  
+  
 }

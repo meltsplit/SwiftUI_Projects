@@ -18,8 +18,13 @@ extension Constant {
     static let Users = "Users"
     static let ChatRooms = "ChatRooms"
     static let Chats = "Chats"
+    
     static let description = "description"
     static let profileURL = "profileURL"
+    static let lastMessage = "lastMessage"
+    static let chatRoomID = "chatRoomID"
+    static let otherUserID = "otherUserID"
+    static let otherUserName = "otherUserName"
   }
   
 }

@@ -21,8 +21,6 @@ struct ChatItemView: View {
         dateView
       }
       
-      
-      
       Text(message)
         .font(.system(size: 14))
         .foregroundStyle(.black)

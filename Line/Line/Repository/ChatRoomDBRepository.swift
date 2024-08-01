@@ -13,12 +13,18 @@ protocol ChatRoomDBRepositoryType {
   func getChatRoom(myUserID: String, otherUserID: String) -> AnyPublisher<ChatRoomObject?, DBError>
   func addChatRoom(_ object: ChatRoomObject, myUserID: String) -> AnyPublisher<Void, DBError>
   func loadChatRooms(myUserID: String) -> AnyPublisher<[ChatRoomObject], DBError>
+  func updateChatRoomLastMessage(
+    chatRoomID: String,
+    myUserID: String,
+    myUserName: String,
+    otherUserID: String,
+    lastMessage: String
+  ) -> AnyPublisher<Void, DBError>
 }
 
 class ChatRoomDBRepository: ChatRoomDBRepositoryType {
   
   var db: DatabaseReference = Database.database().reference()
-  
   
   func getChatRoom(myUserID: String, otherUserID: String) -> AnyPublisher<ChatRoomObject?, DBError> {
     Future<Any?, DBError> { [weak self] promise in
@@ -81,6 +87,31 @@ class ChatRoomDBRepository: ChatRoomDBRepositoryType {
     .eraseToAnyPublisher()
   }
   
+  func updateChatRoomLastMessage(
+    chatRoomID: String,
+    myUserID: String,
+    myUserName: String,
+    otherUserID: String,
+    lastMessage: String
+  ) -> AnyPublisher<Void, DBError> {
+    Future { [weak self] promise in
+      let values = [
+        [DBKey.ChatRooms, myUserID, otherUserID, DBKey.lastMessage].joined(separator: "/") : lastMessage,
+        [DBKey.ChatRooms, otherUserID, myUserID, DBKey.lastMessage].joined(separator: "/") : lastMessage,
+        [DBKey.ChatRooms, otherUserID, myUserID, DBKey.chatRoomID].joined(separator: "/") : chatRoomID,
+        [DBKey.ChatRooms, otherUserID, myUserID, DBKey.otherUserID].joined(separator: "/") : otherUserID,
+        [DBKey.ChatRooms, otherUserID, myUserID, DBKey.otherUserName].joined(separator: "/") : myUserName
+      ]
+      
+      self?.db.updateChildValues(values) { error, _ in
+        if let error { promise(.failure(error))}
+        else { promise(.success(())) }
+      }
+    }
+    .mapError { .error($0)}
+    .eraseToAnyPublisher()
+  }
+  
 }
 
 
@@ -95,6 +126,16 @@ class StubChatRoomDBRepository: ChatRoomDBRepositoryType {
   }
   
   func loadChatRooms(myUserID: String) -> AnyPublisher<[ChatRoomObject], DBError> {
+    Empty().eraseToAnyPublisher()
+  }
+  
+  func updateChatRoomLastMessage(
+    chatRoomID: String,
+    myUserID: String,
+    myUserName: String,
+    otherUserID: String,
+    lastMessage: String
+  ) -> AnyPublisher<Void, DBError> {
     Empty().eraseToAnyPublisher()
   }
   

@@ -28,7 +28,7 @@ class UserDBRepository: UserDBRepositoryType {
     // data -> JSONSerialization
     Just(object)
       .compactMap { try? JSONEncoder().encode($0) }
-      .compactMap { try? JSONSerialization.jsonObject(with: $0,options: .fragmentsAllowed) }
+      .compactMap { try? JSONSerialization.jsonObject(with: $0, options: .fragmentsAllowed) }
       .flatMap { value in
         Future<Void,Error> { [weak self] promise in
           self?.db.child(DBKey.Users).child(object.id).setValue(value) { error , _ in
