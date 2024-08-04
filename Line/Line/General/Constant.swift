@@ -25,6 +25,7 @@ extension Constant {
     static let chatRoomID = "chatRoomID"
     static let otherUserID = "otherUserID"
     static let otherUserName = "otherUserName"
+    static let fcmToken = "fcmToken"
   }
   
 }
