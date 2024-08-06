@@ -119,7 +119,7 @@ struct HomeView: View {
   }
   
   var searchView: some View {
-    NavigationLink(value: NavigationDestination.search) {
+    NavigationLink(value: NavigationDestination.search(userID: viewModel.userID)) {
       SearchButton()
     }
   }

@@ -17,6 +17,7 @@ protocol UserDBRepositoryType {
   func updateUser(userID: String, key: String, value: Any) async throws
   func loadUsers() -> AnyPublisher<[UserObject], DBError>
   func addUserAfterContact(users: [UserObject]) -> AnyPublisher<Void, DBError>
+  func filterUsers(with queryString: String, userID: String) -> AnyPublisher<[UserObject], DBError>
 }
 
 class UserDBRepository: UserDBRepositoryType {
@@ -144,6 +145,35 @@ class UserDBRepository: UserDBRepositoryType {
       .last()
       .mapError { DBError.error($0) }
       .eraseToAnyPublisher()
+  }
+  
+  func filterUsers(with queryString: String, userID: String) -> AnyPublisher<[UserObject], DBError> {
+    Future { [weak self] promise in
+      self?.db.child(DBKey.Users)
+        .queryOrdered(byChild: "name")
+        .queryStarting(atValue: queryString)
+        .queryEnding(atValue: queryString + "\u{f8ff}") // unicode의 마지막 문자
+        .observeSingleEvent(of: .value) { snapshot in
+          promise(.success(snapshot.value))
+        } // [String: [User: Any]]
+    }
+    .flatMap { value -> AnyPublisher<[UserObject], DBError> in
+      
+      guard let value
+      else { return Just([]).setFailureType(to: DBError.self).eraseToAnyPublisher() }
+      
+      guard let dic = value as? [String: [String: Any]]
+      else { return Fail(error: DBError.emptyValue).eraseToAnyPublisher() }
+      
+      return Just(dic)
+        .tryMap { try JSONSerialization.data(withJSONObject: $0) }
+        .decode(type: [String: UserObject].self, decoder: JSONDecoder())
+        .map { Array($0.values) }
+        .mapError { DBError.error($0) }
+        .eraseToAnyPublisher()
+      
+    }
+    .eraseToAnyPublisher()
   }
   
 }
