@@ -12,6 +12,7 @@ struct AuthenticatedView: View {
   
   @StateObject var authViewModel: AuthenticatedViewModel
   @StateObject var navigationRouter: NavigationRouter
+  @StateObject var searchDataController: SearchDataController
   
     var body: some View {
       VStack {
@@ -21,6 +22,7 @@ struct AuthenticatedView: View {
             .environmentObject(authViewModel)
         case .authenticated:
           MainTabView()
+            .environment(\.managedObjectContext, searchDataController.persistantContainer.viewContext)
             .environmentObject(authViewModel)
             .environmentObject(navigationRouter)
             .onAppear {
@@ -31,7 +33,6 @@ struct AuthenticatedView: View {
       }
       .onAppear {
         authViewModel.send(action: .checkAuthorizationState)
-//        authViewModel.send(action: .logout)
         
       }
       
@@ -39,5 +40,5 @@ struct AuthenticatedView: View {
 }
 
 #Preview {
-  AuthenticatedView(authViewModel: .init(container: .init(service: StubService())), navigationRouter: .init())
+  AuthenticatedView(authViewModel: .init(container: .init(service: StubService())), navigationRouter: .init(), searchDataController: .init())
 }

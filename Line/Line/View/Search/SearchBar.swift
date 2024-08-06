@@ -11,10 +11,12 @@ struct SearchBar: UIViewRepresentable {
   
   @Binding var text: String
   @Binding var shouldBecomeFirstResponder: Bool
+  var onClickedSearchButton: (() -> Void)?
   
-  init(text: Binding<String>, shouldBecomeFirstResponder: Binding<Bool>) {
+  init(text: Binding<String>, shouldBecomeFirstResponder: Binding<Bool>,onClickedSearchButton:(() -> Void)?) {
     self._text = text
     self._shouldBecomeFirstResponder = shouldBecomeFirstResponder
+    self.onClickedSearchButton = onClickedSearchButton
   }
   
   
@@ -26,7 +28,7 @@ struct SearchBar: UIViewRepresentable {
   }
   
   func makeCoordinator() -> Coordinator {
-    Coordinator(text: _text, shouldBecomeFirstResponder: _shouldBecomeFirstResponder)
+    Coordinator(text: _text, shouldBecomeFirstResponder: _shouldBecomeFirstResponder, onClickedSearchButton: onClickedSearchButton) 
   }
   
   //뷰모델의 Published가 수정되면 뷰가 바뀌기에 해당 함수가 호출될 것
@@ -62,10 +64,12 @@ extension SearchBar {
     
     @Binding var text: String
     @Binding var shouldBecomeFirstResponder: Bool
+    var onClickedSearchButton: (() -> Void)?
     
-    init(text: Binding<String>, shouldBecomeFirstResponder: Binding<Bool>) {
+    init(text: Binding<String>, shouldBecomeFirstResponder: Binding<Bool>,onClickedSearchButton:(() -> Void)?) {
       self._text = text
       self._shouldBecomeFirstResponder = shouldBecomeFirstResponder
+      self.onClickedSearchButton = onClickedSearchButton
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -78,6 +82,10 @@ extension SearchBar {
     
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
       self.shouldBecomeFirstResponder = false
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+      onClickedSearchButton?()
     }
     
     func setSearchText(_ searchBar: UISearchBar, text: String) {

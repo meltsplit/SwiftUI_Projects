@@ -9,13 +9,19 @@ import SwiftUI
 
 struct SearchView: View {
   
+  @Environment(\.managedObjectContext) var objectContext
   @EnvironmentObject var navigationRouter: NavigationRouter
   @StateObject var viewModel: SearchViewModel
   
   var body: some View {
     VStack {
       topView
-      friendsView
+      
+      if viewModel.searchText.isEmpty {
+        RecentSearchView()
+      } else {
+        friendsView
+      }
       Spacer()
     
     }
@@ -33,7 +39,9 @@ struct SearchView: View {
         Image(systemName: "chevron.left")
       }
       
-      SearchBar(text: $viewModel.searchText, shouldBecomeFirstResponder: $viewModel.shoudBecomeFirstResponder)
+      SearchBar(text: $viewModel.searchText, shouldBecomeFirstResponder: $viewModel.shoudBecomeFirstResponder) {
+        setSearchResultsWithContext()
+      }
       
       Button {
         viewModel.send(action: .clearSearchText)
@@ -75,6 +83,15 @@ struct SearchView: View {
       .listStyle(.plain)
       
     }
+  }
+  
+  func setSearchResultsWithContext() {
+    let result = SearchResult(context: objectContext)
+    result.id = UUID().uuidString
+    result.date = Date()
+    result.name = viewModel.searchText
+    
+    try? objectContext.save()
   }
 }
 
