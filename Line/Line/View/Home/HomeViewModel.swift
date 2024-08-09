@@ -13,8 +13,7 @@ class HomeViewModel: ObservableObject {
   enum Action {
     case load
     case requestContacts
-    case presentMyProfileView
-    case presentOtherProfileView(String) // Associated Type이라고 부르더라
+    case presentView(HomeModalDestination)
     case goToChat(User)
   }
   
@@ -26,21 +25,18 @@ class HomeViewModel: ObservableObject {
   
   var userID: String
   private var container: DIContainer
-  private var navigationRouter: NavigationRouter
   private var subscriptions = Set<AnyCancellable>()
   
   
   init(
     container: DIContainer,
-    navigationRouter: NavigationRouter,
     userID: String
   ) {
     self.container = container
-    self.navigationRouter = navigationRouter
     self.userID = userID
   }
   
-
+  
   
   func send(action: Action) {
     switch action {
@@ -72,12 +68,7 @@ class HomeViewModel: ObservableObject {
           self?.friends = users
         }
         .store(in: &subscriptions)
-
       
-    case .presentMyProfileView:
-      modalDestination = .myProfile
-    case let .presentOtherProfileView(userID):
-      modalDestination = .otherProfile(userID)
     case let .goToChat(otherUser):
       container.service.chatRoomService.createChatRoomIfNeeded(myUserID: userID, otherUserID: otherUser.id, otherUserName: otherUser.name)
         .sink { completion in
@@ -85,13 +76,16 @@ class HomeViewModel: ObservableObject {
           return
         } receiveValue: { [weak self] chatRoom in
           guard let self else { return }
-          self.navigationRouter.push(to: .chat(chatRoomID: chatRoom.chatRoomID,
-                                                myUserID: self.userID,
-                                                otherUserID: otherUser.id
-                                               ))
+          self.container.navigationRouter.push(to: .chat(chatRoomID: chatRoom.chatRoomID,
+                                                         myUserID: self.userID,
+                                                         otherUserID: otherUser.id
+                                                        ))
         }
         .store(in: &subscriptions)
-
+      
+    case let .presentView(destination):
+      self.modalDestination = destination
+      
     }
   }
   

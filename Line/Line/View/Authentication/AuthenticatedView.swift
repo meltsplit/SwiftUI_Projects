@@ -10,9 +10,8 @@ import Combine
 
 struct AuthenticatedView: View {
   
+  @EnvironmentObject var container: DIContainer
   @StateObject var authViewModel: AuthenticatedViewModel
-  @StateObject var navigationRouter: NavigationRouter
-  @StateObject var searchDataController: SearchDataController
   
     var body: some View {
       VStack {
@@ -20,11 +19,11 @@ struct AuthenticatedView: View {
         case .unauthenticated:
           LoginIntroView()
             .environmentObject(authViewModel)
+          
         case .authenticated:
           MainTabView()
-            .environment(\.managedObjectContext, searchDataController.persistantContainer.viewContext)
+            .environment(\.managedObjectContext, container.searchDataController.persistantContainer.viewContext)
             .environmentObject(authViewModel)
-            .environmentObject(navigationRouter)
             .onAppear {
               authViewModel.send(action: .requestPushNotification)
             }
@@ -35,10 +34,11 @@ struct AuthenticatedView: View {
         authViewModel.send(action: .checkAuthorizationState)
         
       }
+      .preferredColorScheme(container.appearanceController.appearance.colorSchems)
       
     }
 }
 
 #Preview {
-  AuthenticatedView(authViewModel: .init(container: .init(service: StubService())), navigationRouter: .init(), searchDataController: .init())
+  AuthenticatedView(authViewModel: .init(container: .init(service: StubService())))
 }

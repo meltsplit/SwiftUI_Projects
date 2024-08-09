@@ -8,10 +8,9 @@
 import Foundation
 
 typealias DBKey = Constant.DBKey
+typealias AppStorageType = Constant.AppStorage
 
-enum Constant {
-  
-}
+enum Constant { }
 
 extension Constant {
   struct DBKey {
@@ -27,5 +26,10 @@ extension Constant {
     static let otherUserName = "otherUserName"
     static let fcmToken = "fcmToken"
   }
-  
+}
+
+extension Constant {
+  struct AppStorage {
+    static let Appearance = "AppStorage_Appearance"
+  }
 }

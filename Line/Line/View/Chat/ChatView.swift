@@ -10,7 +10,7 @@ import PhotosUI
 
 struct ChatView: View {
   
-  @EnvironmentObject var navigationRouter: NavigationRouter
+  @EnvironmentObject var container: DIContainer
   @StateObject var viewModel: ChatViewModel
   @FocusState private var isFocused: Bool
   
@@ -35,7 +35,7 @@ struct ChatView: View {
     .toolbar {
       ToolbarItemGroup(placement: .topBarLeading) {
         Button {
-          navigationRouter.pop()
+          container.navigationRouter.pop()
         } label: {
           Image(systemName: "chevron.left")
             .foregroundStyle(.black)
@@ -146,7 +146,6 @@ struct ChatView: View {
 #Preview {
   NavigationStack {
     ChatView(viewModel: .init(chatRoomID: "cr_1", myUserID: "user_1", otherUserID: "user_2", container: DIContainer(service: StubService())))
-      .environmentObject(NavigationRouter())
   }
   
 }

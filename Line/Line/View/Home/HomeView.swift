@@ -10,12 +10,12 @@ import SwiftUI
 struct HomeView: View {
     
   @EnvironmentObject var container: DIContainer
-  @EnvironmentObject var navigationRouter: NavigationRouter
+  
   @StateObject var viewModel : HomeViewModel
   @State var searchTextFieldText: String = ""
   
   var body: some View {
-    NavigationStack(path: $navigationRouter.destinations) {
+    NavigationStack(path: $container.navigationRouter.destinations) {
       contentView
         .fullScreenCover(item: $viewModel.modalDestination) {
           switch $0 {
@@ -26,7 +26,10 @@ struct HomeView: View {
               otherUser in
               viewModel.send(action: .goToChat(otherUser))
             }
+          case .setting:
+            SettingView(viewModel: .init())
           }
+        
         }
         .navigationDestination(for: NavigationDestination.self) {
           NavigationRoutingView(destination: $0)
@@ -48,7 +51,7 @@ struct HomeView: View {
           Image(systemName: "bell")
           Image(systemName: "person.badge.plus")
           Button {
-            
+            viewModel.send(action: .presentView(.setting))
           } label: {
             Image(systemName: "gearshape")
           }
@@ -114,7 +117,7 @@ struct HomeView: View {
     }
     .padding(.top, 24)
     .onTapGesture {
-      viewModel.send(action: .presentMyProfileView)
+      viewModel.send(action: .presentView(.myProfile))
     }
   }
   
@@ -128,7 +131,7 @@ struct HomeView: View {
     LazyVStack {
       ForEach(viewModel.friends, id: \.id) { user in
         Button {
-          viewModel.send(action: .presentOtherProfileView(user.id))
+          viewModel.send(action: .presentView(.otherProfile(user.id)))
         } label: {
           HStack(spacing: 8) {
             Image(systemName: "person")
@@ -182,7 +185,7 @@ struct HomeView: View {
 
 #Preview {
   
-  HomeView(viewModel: .init(container: .init(service: StubService()), navigationRouter: .init(), userID: ""))
+  HomeView(viewModel: .init(container: .init(service: StubService()), userID: ""))
         .environmentObject(DIContainer(service: StubService()))
-        .environmentObject(NavigationRouter())
+        
 }
